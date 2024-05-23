@@ -6,6 +6,8 @@ import time
 import boto3
 import picollm
 
+from http import HTTPStatus
+
 from botocore.exceptions import ClientError
 
 
@@ -38,16 +40,15 @@ def send_message(payload, connection_id, apigw_client):
     logger.info(f"Response `{response}`")
 
 
-def handle_connect():
-    return 200
-
-
-def handle_disconnect():
-    return 200
-
-
 def handle_message(prompt, connection_id, apigw_client):
-    load_picollm(connection_id, apigw_client)
+    try:
+        load_picollm(connection_id, apigw_client)
+    except Exception as e:
+        send_message(
+            {"action": "error", "msg": f"Failed to initialize picoLLM: {e}"},
+            connection_id,
+            apigw_client)
+        return HTTPStatus.INTERNAL_SERVER_ERROR
 
     start_sec = [0.]
 
@@ -57,14 +58,21 @@ def handle_message(prompt, connection_id, apigw_client):
         send_message({"action": "completion", "msg": token}, connection_id, apigw_client)
 
     send_message({"action": "completion-start"}, connection_id, apigw_client)
-    res = pllm.generate(
-        prompt,
-        completion_token_limit=256,
-        presence_penalty=3,
-        frequency_penalty=0,
-        temperature=0.7,
-        top_p=0.6,
-        stream_callback=stream_callback)
+    try:
+        res = pllm.generate(
+            prompt,
+            completion_token_limit=256,
+            presence_penalty=3,
+            frequency_penalty=0,
+            temperature=0.7,
+            top_p=0.6,
+            stream_callback=stream_callback)
+    except Exception as e:
+        send_message(
+            {"action": "error", "msg": f"Failed to generate: {e}"},
+            connection_id,
+            apigw_client)
+        return HTTPStatus.INTERNAL_SERVER_ERROR
 
     tps = (res.usage.completion_tokens - 1) / (time.time() - start_sec[0])
 
@@ -73,37 +81,44 @@ def handle_message(prompt, connection_id, apigw_client):
         connection_id,
         apigw_client)
 
-    return 200
+    return HTTPStatus.OK
 
 
 def handler(event, context):
     route_key = event.get("requestContext", {}).get("routeKey")
     connection_id = event.get("requestContext", {}).get("connectionId")
     if route_key is None or connection_id is None:
-        return {"statusCode": 400}
+        return {"statusCode": HTTPStatus.BAD_REQUEST}
 
     domain = event.get("requestContext", {}).get("domainName")
     stage = event.get("requestContext", {}).get("stage")
     if domain is None or stage is None:
-        return {"statusCode": 400}
+        return {"statusCode": HTTPStatus.BAD_REQUEST}
 
     apigw_client = boto3.client("apigatewaymanagementapi", endpoint_url=f"https://{domain}/{stage}")
 
-    response = {"statusCode": 200}
+    response = {"statusCode": HTTPStatus.OK}
 
     if route_key == "$connect":
-        response["statusCode"] = handle_connect()
+        response["statusCode"] = HTTPStatus.OK
 
     elif route_key == "$disconnect":
-        response["statusCode"] = handle_disconnect()
+        response["statusCode"] = HTTPStatus.OK
 
     elif route_key == "sendmessage":
         body = event.get("body")
-        body = json.loads(body if body is not None else '{"prompt": ""}')
-        logger.info(f"{body=}")
+        if body is None:
+            response["statusCode"] = HTTPStatus.BAD_REQUEST
+            return response
+
+        body = json.loads(body)
+        if body.get("prompt") is None:
+            response["statusCode"] = HTTPStatus.BAD_REQUEST
+            return response
+
         response["statusCode"] = handle_message(body["prompt"], connection_id, apigw_client)
 
     else:
-        response["statusCode"] = 404
+        response["statusCode"] = HTTPStatus.NOT_FOUND
 
     return response

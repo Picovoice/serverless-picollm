@@ -30,6 +30,10 @@ def handle_message(message):
         print(f"< [Completion finished @ `{tps:.2f}` tps]\n")
         return True, message['completion']
 
+    if ("error" == message['action']):
+        print(f"< [\n{message['msg']}\n]")
+        return True, None
+
     return False, None
 
 
