@@ -1,12 +1,10 @@
-import base64
-import boto3
 import json
 import logging
-import os
 import pathlib
-import picollm
-import sys
 import time
+
+import boto3
+import picollm
 
 from botocore.exceptions import ClientError
 
