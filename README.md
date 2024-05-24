@@ -1,6 +1,6 @@
-# Serverless picoLLM Engine
+# Serverless picoLLM: LLMs running in AWS Lambda!
 
-Code for Serverless LLM article on picovoice.ai ([Link to article](https://picovoice.ai/blog/picollm-on-lambda/))
+Code for the Serverless LLM article on picovoice.ai which you can find here: [Link to article](https://picovoice.ai/blog/picollm-on-lambda/).
 
 ![The Demo in Action](resources/serverless-picollm-small.gif)
 
@@ -73,10 +73,10 @@ Value               wss://ABC123DEF098.execute-api.us-west-2.amazonaws.com/Prod
 ```
 wss://ABC123DEF098.execute-api.us-west-2.amazonaws.com/Prod
 ```
-> [!INFO]
-> If you make any changes to the model, `Dockerfile` or `app.py` files, you will need to repeat these steps.
+> [!NOTE]
+> If you make any changes to the model, `Dockerfile` or `app.py` files, you will need to repeat all these deployment steps.
 
-## Chat
+## Chat!
 
 1. Run `client.py`, passing in the URL copied from the deployment step:
 
