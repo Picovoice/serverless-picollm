@@ -88,7 +88,9 @@ python client.py -u <WebSocket URL>
 
 ```
 > What is the capital of France?
-<
+< The capital of France is Paris.
+
+< [Completion finished @ `6.35` tps]
 ```
 
 > [!IMPORTANT]
