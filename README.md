@@ -32,7 +32,7 @@ git clone https://github.com/Picovoice/serverless-picollm.git
 2. Download a `Phi2` based `.pllm` model from the `picoLLM` section of the [Picovoice Console](https://console.picovoice.ai/picollm).
 
 > [!TIP]
-> Other models will work, BUT they must be chat-enabled.
+> Other models will work as long as they are chat-enabled and fit within the AWS Lambda code size and memory limits.
 > You will also need to update the `Dialog` object in [client.py](client.py) to the appropriate class.
 
 3. Place the downloaded `.pllm` model in the [`models/`](models/) directory.
