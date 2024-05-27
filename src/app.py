@@ -14,7 +14,7 @@ from botocore.exceptions import ClientError
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-ACCESS_KEY = "{YOUR_ACCESS_KEY_HERE}"
+ACCESS_KEY = "${YOUR_ACCESS_KEY_HERE}"
 
 pllm = None
 
