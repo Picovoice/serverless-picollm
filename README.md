@@ -1,6 +1,6 @@
-# Serverless picoLLM: LLMs running in AWS Lambda!
+# Serverless picoLLM: LLMs Running in AWS Lambda!
 
-Code for the Serverless LLM article on picovoice.ai which you can find here: [Link to article](https://picovoice.ai/blog/picollm-on-lambda/).
+Code for the Serverless LLM article on picovoice.ai which you can find here: [picoLLM on Lambda](https://picovoice.ai/blog/picollm-on-lambda/).
 
 ![The Demo in Action](resources/serverless-picollm-small.gif)
 
