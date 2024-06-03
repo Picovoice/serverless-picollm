@@ -35,7 +35,7 @@ git clone https://github.com/Picovoice/serverless-picollm.git
 > Other models will work as long as they are chat-enabled and fit within the AWS Lambda code size and memory limits.
 > You will also need to update the `Dialog` object in [client.py](client.py) to the appropriate class.
 >
-> For example, if using the `llama-3-8b-instruct-326` model, the line in [client.py](client.py) should be updated to: 
+> For example, if using `Llama3` with the `llama-3-8b-instruct-326` model, the line in [client.py](client.py) should be updated to: 
 > ```python
 > dialog = picollm.Llama3ChatDialog(history=3)
 > ```
